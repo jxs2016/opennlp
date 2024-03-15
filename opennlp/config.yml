@@ -1,0 +1,335 @@
+parameters:
+  task:
+    seed:
+      type: int
+      value: 20220516
+      range: [100,10000000]
+      description: random seed.
+      required: True
+    device:
+      required: true
+      type: list
+      value: cuda
+      range: ['cuda','cpu']
+      description: device type.
+    type:
+      required: true
+      type: list
+      value: multilabel_classification
+      range: [classification, multilabel_classification]
+      description: label_type
+    model_name:
+      required: True
+      type: list
+      value: TextRCNN
+      range: [TextRNN, TextRCNN]
+      description:
+    checkpoint_dir:
+      type: created
+      value: ~
+      range: ~
+      description: checkpoint directory.
+      required: True
+  data:
+    dict_dir:
+      required: true
+      type: created
+      value: ~
+      range: ~
+      description: 字典目录
+    trainset_dir:
+      required: true
+      type: file
+      value: ~
+      range: ~
+      description: 训练集路径
+    validateset_dir:
+      required: true
+      type: file
+      value: ~
+      range: ~
+      description:
+    testset_dir:
+      required: true
+      type: file
+      value: ~
+      range: ~
+      description:
+    pretrained_embedding_filepath:
+      required: false
+      type: file
+      value: ~
+      range: ~
+      description:
+    skip_unk:
+      required: false
+      type: bool
+      value: true
+      range: [ true, false ]
+      description: filter UNK.
+    max_token_len:
+      required: true
+      type: int
+      value: 512
+      range: [8, 2048]
+      description:
+    min_token_count:
+      required: true
+      type: int
+      value: 5
+      range: [0, 1000]
+      description:
+    max_token_dict_size:
+      required: true
+      type: int
+      value: 80000
+      range: [1000, 100000]
+      description: max_token_dict_size
+    ngram:
+      required: true
+      type: list
+      value: 0
+      range: [0,2,3,4,5]
+      description: N-Gram, for example, 2 means bigram.
+  initializer:
+    init_type:
+      required: true
+      type: list
+      value: uniform
+      range: [ "uniform", "normal", "xavier_uniform", "xavier_normal", "kaiming_uniform", "kaiming_normal", "orthogonal" ]
+      description: Candidates, "uniform", "normal", "xavier_uniform", "xavier_normal", "kaiming_uniform", "kaiming_normal", "orthogonal".
+    uniform_bound:
+      required: false
+      type: float
+      value: 0.08
+      range: [-10,10]
+      description: If embedding_initializer is uniform, this param will be used as bound.
+    normal_std:
+      required: false
+      type: float
+      value: 1
+      range: [-10, 10]
+      description: If embedding_initializer is random, this param will be used as stddev.
+    normal_mean:
+      required: false
+      type: float
+      value: 0
+      range: [-10,10]
+      description: If embedding_initializer is random, this param will be used as stddev.
+    activation_type:
+      required: true
+      type: list
+      value: linear
+      range: ['sigmoid','tanh','relu','leaky_relu','linear']
+      description: oefficient is calculate according the activation_type.
+    kaiming_fan_mode:
+      required: true
+      type: list
+      value: FAN_IN
+      range: [ 'FAN_IN','FAN_OUT' ]
+      description: Candidates, "FAN_IN", "FAN_OUT".
+    negative_slope:
+      required: false
+      type: float
+      value: 0
+      range: [0,1]
+      description: For kaiming init, coefficient is calculate according the negative_slope.
+  embedding:
+    embedding_type:
+      required: true
+      type: list
+      value: embedding
+      range: ['embedding']
+      description:
+    process_type:
+      required: true
+      type: list
+      value: flat
+      range: [ 'flat','mean','sum' ]
+      description:
+    dimension:
+      required: true
+      type: int
+      value: 100
+      range: [8, 2048]
+      description: dimension of functional.
+    dropout:
+      required: true
+      type: float
+      value: 0.0
+      range: [0,0.9]
+      description: dropout
+  optimizer:
+    optimize_type:
+      required: true
+      type: list
+      value: AdamW
+      range: [ "Adam", "Adadelta", "AdamW"]
+      description:
+    learning_rate:
+      required: true
+      type: float
+      value: 0.008
+      range: [ 0,0.99 ]
+      description:
+    beta1:
+      required: true
+      type: float
+      value: 0.9
+      range: [ 0,999999 ]
+      description: coefficient used for computing a running average of squared gradients.
+    beta2:
+      required: true
+      type: float
+      value: 0.999
+      range: [ 0.5, 0.999999 ]
+      description: Beta2 for AdamW optimizer
+    epsilon:
+      required: true
+      type: float
+      value: 1.0e-8
+      range: [ 1.0e-9, 1.0e-1 ]
+      description: Epsilon for AdamW optimizer.
+    weight_decay:
+      required: true
+      type: float
+      value: 0.0
+      range: [0.0, 0.5 ]
+      description: Weight decay for AdamW if we apply some.
+    amsgrad:
+      required: false
+      type: bool
+      value: false
+      range: [ true, false ]
+      description:  whether to use the AMSGrad variant of this algorithm from the paper `On the Convergence of Adam and Beyond`.
+  train:
+    batch_size:
+      required: true
+      type: int
+      value: 32
+      range: [ 2,1024 ]
+      description:
+    epochs:
+      type: int
+      value: 5
+      range: [1,100000]
+      description: number of epochs.
+      required: True
+    loss_type:
+      type: list
+      value: BCEWithLogitsLoss
+      range: ["SigmoidFocalCrossEntropy", "BCEWithLogitsLoss"]
+      description: Candidates, "SigmoidFocalCrossEntropy", "BCEWithLogitsLoss".
+      required: True
+
+    hidden_dropout:
+      required: true
+      type: float
+      value: 0.0
+      range: [ 0,1 ]
+      description: dropout of hidden layer.
+  eval:
+    greedy:
+      type: bool
+      value: True
+      range: [ True, False ]
+      description: ret_max
+      required: True
+    threshold:
+      type: float
+      value: 0.5
+      range: [ 0,1 ]
+      description: float trunc threshold for predict probabilities.
+      required: True
+    metric_dir:
+      type: created
+      value: ~
+      range: ~
+      description: output dir of evaluation.
+      required: True
+    top_k:
+      type: int
+      value: 8
+      range: [ 1,100 ]
+      description:
+      required: True
+  TextRNN:
+    hidden_dimension:
+      required: true
+      type: int
+      value: 64
+      range: [8, 2048]
+      description: dimension of hidden layer.
+    rnn_type:
+      required: true
+      type: list
+      value: GRU
+      range: ['RNN','GRU','LSTM']
+      description: Candidates, "LSTM", "GRU".
+    num_layers:
+      required: true
+      type: int
+      value: 1
+      range: [ 1,100 ]
+      description: number of layers.
+    bidirectional:
+      required: true
+      type: bool
+      value: true
+      range: [ true, false ]
+      description: Boolean, use Bi-RNNs.
+    context_type:
+      required: true
+      type: list
+      value: Attention
+      range: ["AVG", "Attention", "LastHidden"]
+      description: Candidates, "AVG", "Attention", "LastHidden".
+    attention_dimension:
+      required: true
+      type: int
+      value: 16
+      range: [8, 512]
+      description: dimension of self-attention.
+  TextRCNN:
+    kernel_sizes:
+      type: int_list
+      value: [ 2, 3, 4 ]
+      range: ~
+      description: kernel size.
+      required: True
+    num_kernels:
+      type: int
+      value: 100
+      range: [ 2,2048 ]
+      description: number of kernels.
+      required: True
+    top_k_max_pooling:
+      type: int
+      value: 1
+      range: [ 1,100 ]
+      description: max top-k pooling.
+      required: True
+    hidden_dimension:
+      type: int
+      value: 64
+      range: [ 8, 2048 ]
+      description: dimension of hidden layer.
+      required: True
+    rnn_type:
+      type: str
+      value: GRU
+      range: [ 'GRU','LSTM' ]
+      description: Candidates, "LSTM", "GRU".
+      required: True
+    num_layers:
+      type: int
+      value: 1
+      range: [ 1,100 ]
+      description: number of layers.
+      required: True
+    bidirectional:
+      type: bool
+      value: True
+      range: [ True, False ]
+      description: Boolean, use Bi-RNNs.
+      required: True

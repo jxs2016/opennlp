@@ -1,0 +1,5 @@
+nltk==3.6.7
+numpy==1.19.2
+PyYAML==6.0
+tokenizers==0.10.3
+torch==1.10.1+cu113
